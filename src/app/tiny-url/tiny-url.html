@@ -5,7 +5,7 @@
 
             <h4 class="mb-3">Create a Tiny URL</h4>
 
-            <form (ngSubmit)="createShortUrl()" #urlForm="ngForm">
+            <form (ngSubmit)="createUrl()" #urlForm="ngForm">
 
                 <!-- URL Input -->
                 <div class="mb-3">
@@ -63,10 +63,17 @@
                         <td class="text-break">{{ item.originalUrl }}</td>
                         <td>
                             <a [href]="item.shortUrl" target="_blank">
-                                {{ item.shortUrl }}
+                                {{ item.shortCode }}
                             </a>
                         </td>
-                        <td class="text-capitalize">{{ item.privacy }}</td>
+                        <td class="text-capitalize">
+                            @if(item.isActive){
+                                Private
+                            }
+                            @else{
+                                Public
+                            }
+                        </td>
                         <td class="text-center">
                             <button class="btn btn-outline-secondary btn-sm" (click)="copy(item.shortUrl)">
                                 Copy

@@ -1,37 +1,46 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { SocketServices } from '../services/socket-services';
 
 @Component({
   selector: 'app-tiny-url',
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './tiny-url.html',
-  styleUrl: './tiny-url.scss',
 })
-export class TinyURL {
+export class TinyURL implements OnInit {
   formData = {
     url: '',
     privacy: 'public'
   };
+  result: any;
 
-  constructor(private toastr: ToastrService) {}
+
+  constructor(private toastr: ToastrService, private socketService: SocketServices) { }
+
+  ngOnInit(): void {
+    this.loadAll();
+  }
 
   urls: any[] = [];
 
-  createShortUrl() {
-    // TODO: Call your .NET API here
-
-    const shortUrl = "https://short.ly/" + Math.random().toString(36).substring(2, 7);
-
-    this.urls.push({
-      originalUrl: this.formData.url,
-      shortUrl,
-      privacy: this.formData.privacy
+  loadAll() {
+    this.socketService.getAll().subscribe(data => {
+      this.urls = data;
     });
+  }
 
-    // Reset URL field (optional)
-    this.formData.url = '';
+  createUrl() {
+    this.socketService.create({ originalUrl: this.formData.url }).subscribe(res => {
+      if(res.shortCode == null || res.shortCode == '' || res.shortCode == undefined)
+        this.toastr.error('Error occured while creating short URL', 'Error');
+      else
+      {
+        this.result = res.shortCode;
+        this.loadAll()
+      }
+      });
   }
 
   async copy(text: string) {

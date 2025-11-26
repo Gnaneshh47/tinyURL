@@ -4,6 +4,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
 
 import { routes } from './app.routes';
+import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,6 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideNoopAnimations(),
 
     // ✔ REQUIRED provider (fixes ToastConfig NG0201)
-    provideToastr()
+    provideToastr(),
+    provideHttpClient()
   ]
 };
