@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CreateShortRequest, ShortUrlInfo } from '../interfaces/ishortURL';
 
-// const API_BASE = 'https://tiny-url-47.azurewebsites.net/api';
-const API_BASE = 'https://localhost:7072/api';
+const API_BASE = 'https://tiny-url-47.azurewebsites.net/api';
+//const API_BASE = 'https://localhost:7072/api';
 
 @Injectable({
   providedIn: 'root',
