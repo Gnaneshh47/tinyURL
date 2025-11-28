@@ -30,21 +30,19 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: angular-dist
-          path: dist/tinyURL
-          # ^^^ replace tiny-url-fe with your actual Angular project name
-
+          path: dist/tinyURL/
+          # MUST match exactly the folder inside "dist"
+  
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: angular-dist
-          path: dist/tinyURL
+          path: dist/tinyURL/
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
