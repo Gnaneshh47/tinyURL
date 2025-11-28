@@ -1,4 +1,4 @@
-name: Build and Deploy Angular App
+name: Build and deploy Angular app to Azure Web App - tiny-url-fe
 
 on:
   push:
@@ -11,44 +11,59 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout code
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      # 2️⃣ Setup Node.js (Angular CLI requires Node 20+)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20.x'
 
-      - name: Install dependencies
-        run: npm install
+      # 3️⃣ Install Angular CLI globally
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli@20
 
-      - name: Build Angular app
-        run: npm run build --prod
+      # 4️⃣ Install dependencies and build Angular
+      - name: Install dependencies and build
+        run: |
+          npm install
+          ng build --configuration production
 
-      # Upload dist folder
+      # 5️⃣ Upload dist folder as artifact
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: angular-dist
-          path: dist/
+          path: dist/tinyURL/   # <-- replace with your actual Angular project folder inside dist
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-      - name: Download artifact
+      # 1️⃣ Checkout repo (optional)
+      - uses: actions/checkout@v4
+
+      # 2️⃣ Download build artifact
+      - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: angular-dist
-          path: ./dist
+          pathh: dist/tinyURL/
 
-      - name: Login to Azure using Publish Profile
-        uses: azure/login@v1
+      # 3️⃣ Login to Azure using Service Principal
+      - name: Azure Login
+        uses: azure/login@v2
         with:
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          allow-no-subscriptions: false
 
+      # 4️⃣ Deploy Angular app to Azure Web App
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: tiny-url-fe
           package: ./dist
