@@ -21,6 +21,7 @@ jobs:
       - name: npm install, build
         run: |
           npm install
+          npm install -g @angular/cli@20.0.0
           ng build --configuration production
 
       - name: Build Angular app
