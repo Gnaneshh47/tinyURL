@@ -30,7 +30,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: angular-dist
-          path: dist/tiny-url-fe/
+          path: dist/tinyURL
           # ^^^ replace tiny-url-fe with your actual Angular project name
 
   deploy:
@@ -44,7 +44,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: angular-dist
-          path: ./angular-dist
+          path: dist/tinyURL
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
