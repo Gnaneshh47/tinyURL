@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CreateShortRequest, ShortUrlInfo } from '../interfaces/ishortURL';
 
-const API_BASE = 'https://tiny-url-47.azurewebsites.net/api';
-
+// const API_BASE = 'https://tiny-url-47.azurewebsites.net/api';
+const API_BASE = 'https://localhost:7072/api';
 
 @Injectable({
   providedIn: 'root',
@@ -15,21 +15,16 @@ export class SocketServices {
 
   // GET all URLs
   getAll(): Observable<ShortUrlInfo[]> {
-    return this.http.get<ShortUrlInfo[]>(`${API_BASE}/urls`);
-  }
-
-  // GET one URL by code
-  getByCode(code: string): Observable<ShortUrlInfo> {
-    return this.http.get<ShortUrlInfo>(`${API_BASE}/urls/${code}`);
+    return this.http.get<ShortUrlInfo[]>(`${API_BASE}/shorturls`);
   }
 
   // POST create new short URL
-  create(payload: CreateShortRequest): Observable<any> {
-    return this.http.post(`${API_BASE}/shorten`, payload);
+  create(payload: any): Observable<any> {
+    return this.http.post(`${API_BASE}/shorturls`, payload);
   }
 
   // DELETE or DISABLE (depends on your API)
-  disable(code: string): Observable<any> {
-    return this.http.put(`${API_BASE}/urls/${code}/disable`, {});
+  delete(code: string): Observable<any> {
+    return this.http.delete(`${API_BASE}/shorturls/${code}`, {});
   }
 }
