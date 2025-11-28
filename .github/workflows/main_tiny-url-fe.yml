@@ -1,4 +1,4 @@
-name: Build and deploy Angular app to Azure Web App - tiny-url-fe
+name: Build and Deploy Angular App
 
 on:
   push:
@@ -13,26 +13,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
+          node-version: 20
 
-      - name: Install Angular CLI
-        run: npm install -g @angular/cli@20
+      - name: Install dependencies
+        run: npm install
 
-      - name: Install dependencies and build
-        run: |
-          npm install
-          ng build --configuration production
+      - name: Build Angular app
+        run: npm run build --prod
 
+      # Upload dist folder
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: angular-dist
-          path: dist/tinyURL/
-          # MUST match exactly the folder inside "dist"
-  
+          path: dist/
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -42,15 +40,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: angular-dist
-          path: dist/tinyURL/
-      - name: Login to Azure
-        uses: azure/login@v2
+          path: ./dist
+
+      - name: Login to Azure using Publish Profile
+        uses: azure/login@v1
         with:
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
 
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+        uses: azure/webapps-deploy@v2
         with:
           app-name: tiny-url-fe
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: ./angular-dist
+          package: ./dist
